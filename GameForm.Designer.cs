@@ -19,6 +19,7 @@ namespace Game
 		private bool left;
 		private bool up;
 		private bool down;
+		private bool isFirst;
 		private readonly Size spaceSize = new Size(900, 900);
 		private readonly Image image;
 		private int iterationIndex;
@@ -67,14 +68,12 @@ namespace Game
 		private void TimerTick(object sender, EventArgs e)
 		{
 			if (currentLevel == null) return;
-			MoveRocket();
-			Text ="Iteration # " + iterationIndex++;
+			MovePlayer();
 			Invalidate();
 			Update();
 		}
 
-
-		protected override void OnKeyDown(KeyEventArgs e)
+        protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);
 			HandleKey(e.KeyCode, true);
@@ -91,15 +90,17 @@ namespace Game
 			if (e == Keys.D) right = down;
 			if (e == Keys.W) up = down;
 			if (e == Keys.S) this.down = down;
+			if (e == Keys.Q) isFirst = true;
+			if (e == Keys.E) isFirst = false;
 		}
-		private void MoveRocket()
+		private void MovePlayer()
 		{
 			//var rotate = left ? Turn.Left : (right ? Turn.Right : Turn.None);
 			//currentLevel.Move(spaceSize, rotate);
-			if (up) currentLevel.Move(spaceSize, Turn.None, 0, 70);
-			if (down) currentLevel.Move(spaceSize, Turn.None,  0, -70);
-			if (left) currentLevel.Move(spaceSize, Turn.None, -70, 0);
-			if (right) currentLevel.Move(spaceSize, Turn.None,  70, 0);
+			if (up) currentLevel.Move(spaceSize, isFirst, Turn.None, 0, 70);
+			if (down) currentLevel.Move(spaceSize, isFirst, Turn.None,  0, -70);
+			if (left) currentLevel.Move(spaceSize, isFirst, Turn.None, -70, 0);
+			if (right) currentLevel.Move(spaceSize, isFirst, Turn.None,  70, 0);
 
 		}
 
@@ -123,8 +124,12 @@ namespace Game
 			if (timer.Enabled)
 			{
 				g.Transform = matrix;
-				g.TranslateTransform((float)currentLevel.Player.Location.X, (float)currentLevel.Player.Location.Y);
-				g.RotateTransform(90 + (float)(currentLevel.Player.Direction * 180 / Math.PI));
+				g.TranslateTransform((float)currentLevel.Player1.Location.X, (float)currentLevel.Player1.Location.Y);
+				g.RotateTransform(90 + (float)(currentLevel.Player1.Direction * 180 / Math.PI));
+				g.DrawImage(playerImg, new Point(-playerImg.Width / 2, -playerImg.Height / 2));
+
+				g.TranslateTransform((float)currentLevel.Player2.Location.X, (float)currentLevel.Player2.Location.Y);
+				g.RotateTransform(90 + (float)(currentLevel.Player2.Direction * 180 / Math.PI));
 				g.DrawImage(playerImg, new Point(-playerImg.Width / 2, -playerImg.Height / 2));
 			}
 		}
