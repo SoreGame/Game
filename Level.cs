@@ -30,13 +30,20 @@ namespace Game
 		//	Player = physics.MoveRocket(Player, forceX, forceY, turn, spaceSize, 0.3);
 		//}
 
-		public void Move(Size spaceSize,bool isFirst, Turn turn, int HorizontalSpeed, int VerticalSpeed)
+		public Player Move(Size spaceSize,bool isFirst, Turn turn, int HorizontalSpeed, int VerticalSpeed)
 		{
-			var forceX = ForcesTask.GetThrustForceX(HorizontalSpeed);
-			var forceY = ForcesTask.GetThrustForceY(VerticalSpeed);
+			var forceX = Force.GetThrustForceX(HorizontalSpeed);
+			var forceY = Force.GetThrustForceY(VerticalSpeed);
 			if (isFirst)
-			Player1 = physics.MovePlayer(Player1, forceX, forceY, turn, spaceSize, 0.3);
-
+			{
+				Player1 = physics.MovePlayer(Player1, forceX, forceY, turn, spaceSize, 0.375);
+				return Player1;
+			}
+			else
+			{
+				Player2 = physics.MovePlayer(Player2, forceX, forceY, turn, spaceSize, 0.375);
+				return Player2;
+			}
 		}
 
 		public void Reset()

@@ -1,18 +1,17 @@
-﻿namespace Game
+﻿using System.Drawing;
+
+namespace Game
 {
     public class Player
     {
-		public Player(Vector location, Vector velocity, double direction, bool isMyTurn)
+		public Player(Vector location, Vector velocity)
 		{
 			Location = location;
 			Velocity = velocity;
-			Direction = direction;
-			IsMyTurn = isMyTurn;
 		}
 
 		public readonly Vector Location;
 		public readonly Vector Velocity;
-		public readonly double Direction;
-		public readonly bool IsMyTurn;
+		public Image image;
 	}
 }

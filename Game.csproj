@@ -46,7 +46,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Domain\Game.cs" />
     <Compile Include="Force.cs" />
     <Compile Include="GameForm.cs" />
     <Compile Include="GameForm.Designer.cs">
@@ -54,6 +53,7 @@
     </Compile>
     <Compile Include="Level.cs" />
     <Compile Include="Levels.cs" />
+    <Compile Include="MovementTest.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Physics.cs" />
     <Compile Include="PlayerForce.cs" />
@@ -86,6 +86,16 @@
   <ItemGroup>
     <Content Include="Sprites\PlayerImg.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Domain\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NUnit">
+      <Version>3.13.2</Version>
+    </PackageReference>
+    <PackageReference Include="NUnit3TestAdapter">
+      <Version>3.17.0</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

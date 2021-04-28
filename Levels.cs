@@ -10,8 +10,8 @@ namespace Game
 		public static IEnumerable<Level> CreateLevels()
 		{
 			yield return new Level("Zero", //Название уровня
-				new Player(new Vector(100, 500), Vector.Zero, -0.5 * Math.PI, true), //Стартовая позиция, начальная скорость, поворот 
-				new Player(new Vector(200, 250), Vector.Zero, -0.5 * Math.PI, true),
+				new Player(new Vector(100, 500), Vector.Zero/*, true*/), //Стартовая позиция, начальная скорость, поворот 
+				new Player(new Vector(200, 250), Vector.Zero/*, true*/),
 				standardPhysics); 
 		}
 	}
