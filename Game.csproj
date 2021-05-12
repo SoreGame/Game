@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Bot.cs" />
+    <Compile Include="Comand.cs" />
     <Compile Include="Force.cs" />
     <Compile Include="GameForm.cs" />
     <Compile Include="GameForm.Designer.cs">

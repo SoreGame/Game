@@ -14,6 +14,7 @@ namespace Game
 	{
 		private readonly Image firstPlayerImg;
 		private readonly Image secondPlayerImg;
+		private readonly Image exit;
 		private readonly Timer timer;
 		private Level currentLevel;
         private readonly Image image;
@@ -21,9 +22,8 @@ namespace Game
 		private bool left;
 		private bool up;
 		private bool down;
-		private bool isFirst;
 		private readonly Size spaceSize = new Size(900, 900);
-
+		private Level next;
 		private int iterationIndex;
 
 		protected override void OnLoad(EventArgs e)
@@ -35,11 +35,13 @@ namespace Game
 
 		public GameForm(IEnumerable<Level> levels)
 		{
-            firstPlayerImg = Image.FromFile(" D:/Проекты С#/Game/Game/Sprites/link.png");
-			secondPlayerImg = Image.FromFile(" D:/Проекты С#/Game/Game/Sprites/rocket.png");
+            firstPlayerImg = Image.FromFile("D:/Проекты С#/Game/Game/Sprites/link.png");
+			secondPlayerImg = Image.FromFile("D:/Проекты С#/Game/Game/Sprites/rocket.png");
+			exit = Image.FromFile("D:/Проекты С#/Game/Game/Sprites/target.png");
 			image = new Bitmap(spaceSize.Width, spaceSize.Height, PixelFormat.Format24bppRgb);
 			timer = new Timer { Interval = 10 };
 			timer.Tick += TimerTick;
+			timer.Tick += SecondCounter;
 			timer.Start();
 			var top = 10;
 			foreach (var level in levels)
@@ -52,6 +54,7 @@ namespace Game
 					Top = top,
 					BackColor = Color.Transparent
 				};
+				if (level.Id < levels.Count()) next = levels.SkipWhile(i => i.Id != level.Id).Skip(1).FirstOrDefault();
 				link.LinkClicked += (sender, args) => ChangeLevel(level);
 				link.Parent = this;
 				Controls.Add(link);
@@ -60,14 +63,31 @@ namespace Game
 			KeyPreview = true;
 		}
 
-		private void ChangeLevel(Level newSpace)
+        private void ChangeLevel(Level newSpace)
 		{
 			currentLevel = newSpace;
 			currentLevel.Reset();
 			timer.Start();
 			iterationIndex = 0;
 		}
-		protected override void OnKeyDown(KeyEventArgs e)
+
+		private void SecondCounter(object sender, EventArgs e) 
+		{
+			if (iterationIndex % 100 == 0) currentLevel.TimerTick();
+			if (currentLevel.TimerValue <= 0)
+			{
+				currentLevel.Reset();
+				currentLevel.SetIsFistFalse();
+			}
+		}
+
+        protected override void OnKeyPress(KeyPressEventArgs e)
+        {
+            base.OnKeyPress(e);
+			NextIteration(e.KeyChar);
+        }
+
+        protected override void OnKeyDown(KeyEventArgs e)
 		{
 			base.OnKeyDown(e);
 			HandleKey(e.KeyCode, true);
@@ -83,25 +103,43 @@ namespace Game
 			if (e == Keys.D) right = down;
 			if (e == Keys.W) up = down;
 			if (e == Keys.S) this.down = down;
-			if (e == Keys.Q) isFirst = true;
-			if (e == Keys.E) isFirst = false;
 		}
 		private void MovePlayer()
 		{
 			//var rotate = left ? Turn.Left : (right ? Turn.Right : Turn.None);
 			//currentLevel.Move(spaceSize, rotate);
-			if (up) currentLevel.Move(spaceSize, isFirst, Turn.None, 0, 70);
-			if (down) currentLevel.Move(spaceSize, isFirst, Turn.None, 0, -70);
-			if (left) currentLevel.Move(spaceSize, isFirst, Turn.None, -70, 0);
-			if (right) currentLevel.Move(spaceSize, isFirst, Turn.None, 70, 0);
+			if (up) currentLevel.Move(spaceSize, currentLevel.IsFirst, Turn.None, 0, 70);
+			if (down) currentLevel.Move(spaceSize, currentLevel.IsFirst, Turn.None, 0, -70);
+			if (left) currentLevel.Move(spaceSize, currentLevel.IsFirst, Turn.None, -70, 0);
+			if (right) currentLevel.Move(spaceSize, currentLevel.IsFirst, Turn.None, 70, 0);
 
+		}
+
+		private void NextIteration(object e)
+		{
+			if ((char)e == (char)113)
+			{
+				currentLevel.SwichIsFirst();
+				currentLevel.IterationCount++;
+				currentLevel.Reset();
+			}
 		}
 
 		private void TimerTick(object sender, EventArgs e)
 		{
 			if (currentLevel == null) return;
 			MovePlayer();
-			Text = "IsFirst - " + isFirst;
+			if (currentLevel.IsCompleted)
+			{
+				Text = "Level is completed - " + currentLevel.IsCompleted;
+				timer.Stop();
+				ChangeLevel(next);
+			}
+			else
+			{
+				Text = "IsFirst - "+currentLevel.IsFirst+currentLevel.TimerValue;
+				iterationIndex++;
+			}
 			Invalidate();
 			Update();
 		}
@@ -121,7 +159,6 @@ namespace Game
 
 			DrawTo(g, currentLevel.Player1);
 			DrawTo(g2, currentLevel.Player2);
-
 			e.Graphics.DrawImage(image, (ClientRectangle.Width - image.Width) / 2, (ClientRectangle.Height - image.Height) / 2);
 		}
 
@@ -130,16 +167,18 @@ namespace Game
 
 			if (currentLevel == null) return;
 
-			var matrix = g.Transform;
+			g.DrawImage(exit, new Point((int)currentLevel.Exit.X, (int)currentLevel.Exit.Y));
 
+			var matrix = g.Transform;
+			
 			if (timer.Enabled)
 			{
 				g.Transform = matrix;
 
 				g.TranslateTransform((float)player.Location.X, (float)player.Location.Y);
 				g.DrawImage(player.image, new Point(-firstPlayerImg.Width / 2, -firstPlayerImg.Height / 2));
-
 			}
+
 		}
 	}
 }
