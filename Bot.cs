@@ -14,40 +14,73 @@ namespace Game
             Physics = physics;
         }
 
-        Queue<Comand> SavedFirstPlayerTurns = new Queue<Comand>();
-        Queue<Comand> SavedSecondPlayerTurns = new Queue<Comand>();
+        private Queue<Comand> SavedFirstPlayerComands = new Queue<Comand>();
+        private Queue<Comand> SavedSecondPlayerComands = new Queue<Comand>();
+
+        private Queue<Comand> FirstBufferComands = new Queue<Comand>();
+        private Queue<Comand> SecondBufferComands = new Queue<Comand>();
 
         private Physics Physics;
         private readonly Size spaceSize = new Size(900, 900);
 
 
-        public void SaveTurn(bool isFirst, int HorizontalSpeed, int VerticalSpeed) 
+        public void SaveTurn(bool isFirst, PlayerForce forceX, PlayerForce forceY, int HorizontalSpeed, int VerticalSpeed) 
         {
             if (isFirst)
-                SavedFirstPlayerTurns.Enqueue(new Comand() {IsFirst = isFirst, HorizontalSpeed = HorizontalSpeed, VerticalSpeed = VerticalSpeed});
+            {
+                SavedFirstPlayerComands.Enqueue(new Comand() { IsFirst = isFirst, forceX = forceX, forceY = forceY });
+                FirstBufferComands.Enqueue(new Comand() { IsFirst = isFirst, forceX = forceX, forceY = forceY });
+            }
             else
-                SavedSecondPlayerTurns.Enqueue(new Comand() {IsFirst = isFirst, HorizontalSpeed = HorizontalSpeed, VerticalSpeed = VerticalSpeed });
+            {
+                SavedSecondPlayerComands.Enqueue(new Comand() { IsFirst = isFirst, forceX = forceX, forceY = forceY });
+                SecondBufferComands.Enqueue(new Comand() { IsFirst = isFirst, forceX = forceX, forceY = forceY });
+            }
         }
 
-        public Player BotMove(Player player, bool isFirtst, PlayerForce forceX, PlayerForce forceY)
+        public Player BotMove(Player player, bool isFirtst, MapController map)
         {
-            if (isFirtst)
+
+            PlayerForce forceX = Force.GetThrustForceX(0);
+            PlayerForce forceY = Force.GetThrustForceX(0);
+            return !isFirtst 
+                ? UseComandsFromQueue(player, forceX, forceY, SavedFirstPlayerComands, map) 
+                : UseComandsFromQueue(player, forceX, forceY, SavedSecondPlayerComands, map);
+        }
+
+        private Player UseComandsFromQueue(Player player, PlayerForce forceX, PlayerForce forceY, Queue<Comand> queue, MapController map)
+        {
+            if (queue.Count > 0)
             {
-                var turn = SavedFirstPlayerTurns.Dequeue();
-                var horizontalSpeed = turn.HorizontalSpeed;
-                var verticalSpeed = turn.VerticalSpeed;
-                Console.WriteLine("FAKEMOVE1");
-                return Physics.MovePlayer(player, forceX, forceY, Turn.None, spaceSize, 0.375);
+                var comand = queue.Dequeue();
+                forceX = comand.forceX;
+                forceY = comand.forceY;
             }
-            else 
-            {
-                var turn = SavedSecondPlayerTurns.Dequeue();
-                var horizontalSpeed = turn.HorizontalSpeed;
-                var verticalSpeed = turn.VerticalSpeed;
-                Console.WriteLine("FAKEMOVE2");
-                return Physics.MovePlayer(player, forceX, forceY, Turn.None, spaceSize, 0.375);
-            }
+            return Physics.MovePlayer(player, forceX, forceY, Turn.None, spaceSize, 0.3, map);
+        }
+
+        public void ClearBothQueue() 
+        {
+            SavedFirstPlayerComands.Clear();
+            SavedSecondPlayerComands.Clear();
+        }
+
+        public void ClearFirstQueue() 
+        {
+            SavedFirstPlayerComands.Clear();
+        }
+
+        public void ClearSecondQueie() 
+        {
+            SavedSecondPlayerComands.Clear();
+        }
+
+        public void UseBuffer(bool IsFirst)
+        {
+            if (IsFirst)
+                SavedSecondPlayerComands = SecondBufferComands;
+            else
+                SavedFirstPlayerComands = FirstBufferComands;
         }
     }
-
 }

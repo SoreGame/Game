@@ -10,6 +10,7 @@ namespace Game
 			Velocity = velocity;
 		}
 
+		public readonly int Size = 30;
 		public readonly Vector Location;
 		public readonly Vector Velocity;
 		public Image image;

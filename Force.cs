@@ -7,11 +7,11 @@ namespace Game
 	{
 		public static PlayerForce GetThrustForceY(double forceValue)
 		{
-			return rocket => new Vector(forceValue, 0).Rotate(-0.5 * Math.PI);
+			return player => new Vector(forceValue, 0).Rotate(-0.5 * Math.PI);
 		}
 		public static PlayerForce GetThrustForceX(double forceValue)
 		{
-			return rocket => new Vector(forceValue, 0);
+			return player => new Vector(forceValue, 0);
 		}
 	}
 }

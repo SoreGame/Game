@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
+    <Compile Include="Block.cs" />
     <Compile Include="Comand.cs" />
     <Compile Include="Force.cs" />
     <Compile Include="GameForm.cs" />
@@ -55,6 +56,9 @@
     </Compile>
     <Compile Include="Level.cs" />
     <Compile Include="Levels.cs" />
+    <Compile Include="MapController.cs" />
+    <Compile Include="MapCell.cs" />
+    <Compile Include="MapEntity.cs" />
     <Compile Include="MovementTest.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Physics.cs" />
@@ -71,6 +75,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -86,6 +91,12 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Dungeon1.txt" />
+    <Content Include="Resources\Dungeon2.txt" />
+    <Content Include="Resources\Dungeon3.txt" />
+    <Content Include="Sprites\Dwarf.png" />
+    <Content Include="Sprites\Forest.png" />
+    <Content Include="Sprites\player.bmp" />
     <Content Include="Sprites\PlayerImg.png" />
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +109,9 @@
     <PackageReference Include="NUnit3TestAdapter">
       <Version>3.17.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
